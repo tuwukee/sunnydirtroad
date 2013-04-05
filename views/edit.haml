@@ -1,0 +1,8 @@
+%h1 Editing a video
+%form{:method=>"post", :action=>"/videos/#{@video_file.id}", :enctype=>'multipart/form-data'}
+  %input{:type=>"hidden", :name=>"_method", :value=>"put"}
+  Name:
+  %input{:type=>"text", :name=>"name", :value=>"#{@video_file.name}"}
+  %br
+  %input{:type=>"submit", :value=>"Submit"}
+  %br

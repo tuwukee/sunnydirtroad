@@ -1,0 +1,9 @@
+%h1 Adding a new video
+%form{:method=>"post", :action=>"/videos", :enctype=>'multipart/form-data'}
+  Name:
+  %input{:type=>"text", :name=>"name"}
+  %br
+  %input(type='file' name='myfile')
+  %br
+  %input{:type=>"submit", :value=>"Submit"}
+  %br

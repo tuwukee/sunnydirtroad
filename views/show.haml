@@ -1,0 +1,12 @@
+%h1 Showing video
+Name:
+= @video_file.name
+%br
+%br
+
+= partial(:"video", :template_engine => :erb, :locals => { :video_file => @video_file })
+
+%br
+%br
+
+%a{:href=>"/videos"}= "List of videos"

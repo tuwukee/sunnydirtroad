@@ -1,0 +1,16 @@
+%h1 Listing all videos
+%table
+  %tr
+    %th Name
+    %th Action
+  - @video_files.each do |r|
+    %tr
+      %td
+        =link_to "/videos/#{r.id}", r.name
+      %td
+        =link_to "/videos/#{r.id}/edit", 'edit'
+      %td
+        =link_to "/videos/#{r.id}/remove", 'delete'
+%br
+%a{:href=>"/videos/new"}
+  New Video
