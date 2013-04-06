@@ -37,11 +37,11 @@ get '/videos/:id' do
 end
 
 post '/videos' do
-  params['myfile'] ? filename = params['myfile'][:filename] : filename = ''
+  params['myfile'] ? filename = "#{Digest::SHA1.hexdigest(Time.now.to_s)}_#{params['myfile'][:filename]}" : filename = ''
   @video_file = VideoFile.new(:name => params[:name], :filename => filename)
   if @video_file.save
     Cache.set("/videos/#{filename}", params['myfile'][:tempfile].read)
-    File.open('uploads/' + params['myfile'][:filename], "w") do |f|
+    File.open('uploads/' + filename, "w") do |f|
       f.write(params['myfile'][:tempfile].read)
     end
     redirect "/videos/#{@video_file.id}"
