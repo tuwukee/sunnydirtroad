@@ -14,6 +14,8 @@ before do
   Cache.establish_connection
 end
 
+N_VIDEOS = 3
+
 ## Controller Actions
 get '/' do
   "Hello, World!"
@@ -37,9 +39,10 @@ get '/videos/:id' do
 end
 
 post '/videos' do
-  params['myfile'] ? filename = "#{Digest::SHA1.hexdigest(Time.now.to_s)}_#{params['myfile'][:filename]}" : filename = ''
+  params['myfile'] ? filename = "#{Time.now.to_s}_#{params['myfile'][:filename]}" : filename = ''
   @video_file = VideoFile.new(:name => params[:name], :filename => filename)
   if @video_file.save
+    Cache.remove_eldest_key if Cache.count > N_VIDEOS
     Cache.set("/videos/#{filename}", params['myfile'][:tempfile].read)
     File.open('uploads/' + filename, "w") do |f|
       f.write(params['myfile'][:tempfile].read)
@@ -60,6 +63,7 @@ end
 
 get '/videos/:id/remove' do
   @video_file = VideoFile.find(params[:id])
+  Cache.remove("/videos/#{@video_file.filename}")
   File.delete("./uploads/#{@video_file.filename}")
   @video_file.delete
   redirect '/videos'
