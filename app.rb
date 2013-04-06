@@ -8,6 +8,11 @@ require 'redis'
 require './config/environments' #database configuration
 require './models/video_file'
 require './helpers/application_helper'
+require './lib/cache'
+
+before do
+  Cache.establish_connection
+end
 
 ## Controller Actions
 get '/' do
@@ -32,13 +37,10 @@ get '/videos/:id' do
 end
 
 post '/videos' do
-  if params['myfile']
-    filename = params['myfile'][:filename]
-  else
-    filename = ''
-  end
+  params['myfile'] ? filename = params['myfile'][:filename] : filename = ''
   @video_file = VideoFile.new(:name => params[:name], :filename => filename)
   if @video_file.save
+    Cache.set("/videos/#{filename}", params['myfile'][:tempfile].read)
     File.open('uploads/' + params['myfile'][:filename], "w") do |f|
       f.write(params['myfile'][:tempfile].read)
     end
@@ -49,7 +51,11 @@ post '/videos' do
 end
 
 get '/uploads/:filename' do |filename|
-  File.read("./uploads/#{filename}")
+  if (video = Cache.get("/videos/#{filename}")).nil?
+    File.read("./uploads/#{filename}")
+  else
+    video
+  end
 end
 
 get '/videos/:id/remove' do

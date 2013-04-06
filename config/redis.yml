@@ -1,0 +1,10 @@
+production:
+  host:      localhost
+  port:      6380
+  database:  sunnydirtroad_production
+  namespace: production
+development:
+  host:      localhost
+  port:      6380
+  database:  sunnydirtroad_development
+  namespace: development
